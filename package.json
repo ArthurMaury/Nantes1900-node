@@ -1,0 +1,11 @@
+{
+  "name": "nantes1900_api",
+  "version": "1.0.0",
+  "description": "API Nantes 1900",
+  "main": "index.js",
+  "author": "Arthur Maury",
+  "license": "ISC",
+  "dependencies": {
+    "express":"4.16.1"
+  }
+}
