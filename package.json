@@ -1,11 +1,13 @@
 {
-  "name": "nantes1900_api",
-  "version": "1.0.0",
-  "description": "API Nantes 1900",
-  "main": "index.js",
+  "name": "nantes1900-node",
+  "description": "API pour Nantes 1900",
+  "repository": {
+    "url": "https://github.com/ArthurMaury/Nantes1900-node"
+  },
   "author": "Arthur Maury",
-  "license": "ISC",
+  "version": "0.0.0",
   "dependencies": {
-    "express":"4.16.1"
+    "express": "~4.15.5",
+    "pg": "^7.3.0"
   }
 }
