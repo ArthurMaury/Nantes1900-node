@@ -1,17 +1,14 @@
 const express = require('express')
+var fs = require('fs');
 const app = express()
 
 const pg = require('pg');
 
 app.listen(3000, function () { })
 
-const client = new pg.Client({
-    host: 'localhost',
-    port: 5432,
-    database: 'nantes1900',
-    user: 'postgres',
-    password: 'toor',
-})
+const config = fs.readFileSync("database_config.json")
+
+const client = new pg.Client(JSON.parse(config))
 client.connect();
 
 function getData(query) {
@@ -28,7 +25,9 @@ function getData(query) {
 //#region GETTING OBJECTS
 
 app.get('/Objects', (req, res) => {
+    console.time('getObjects')
     getObjects().then(data => {
+        console.timeEnd('getObjects')
         res.send(data);
     })
 })
@@ -105,7 +104,9 @@ function getSpatialObject(object) {
 //#region GETTING RELATIONS
 
 app.get('/Relations', (req, res) => {
+    console.time('getRelations')
     getRelations().then(data => {
+        console.timeEnd('getRelations')
         res.send(data);
     })
 })
@@ -125,7 +126,9 @@ function getRelations() {
 //#region GETTING SPATIAL DATA
 
 app.get('/Spatial', (req, res) => {
+    console.time('getSpatial')
     getSpatialData().then(data => {
+        console.timeEnd('getSpatial')
         res.send(data);
     })
 })
