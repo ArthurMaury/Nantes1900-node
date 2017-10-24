@@ -29,16 +29,19 @@ function getData(query) {
 
 app.get('/Objects', (req, res) => {
     getObjects().then(data => {
-        res.send(data); // HACK
+        res.send(data);
     })
 })
 
 function getObjects() {
-    const objectsColumns = ["object_id", "object_title", "object_abstract", "object_description", "object_version", "object_status"];
+    const objectsColumns = ["object_id Id", "object_title Title", "object_abstract Abstract", "object_version VersionNb", "object_status Status"];
     const objectsQuery = `SELECT ${objectsColumns.join(',')} from object.object`;
     return getData(objectsQuery)
-        .then(addKeywords)
         .then(addSpatial);
+
+    /*return getData(objectsQuery)
+        .then(addKeywords)
+        .then(addSpatial);*/
 }
 
 function addKeywords(objects) {
@@ -46,7 +49,7 @@ function addKeywords(objects) {
     objects.forEach(object => {
         promises.push(
             getKeywords(object).then(keywords => {
-                object["keywords"] = keywords.map(keyword => {
+                object["Keywords"] = keywords.map(keyword => {
                     return keyword.keyword_name;
                 });
                 return object;
@@ -74,9 +77,7 @@ function addSpatial(objects) {
         promises.push(
             getSpatialObject(object).then(spatial => {
                 if (spatial){
-                    Object.keys(spatial).forEach(prop => {
-                        object[prop] = spatial[prop];
-                    })
+                    Object.Geometry = spatial.Geometry
                 }
                 return object;
             })
@@ -88,11 +89,11 @@ function addSpatial(objects) {
 }
 
 function getSpatialObject(object) {
-    const spatialColumns = ["spatial_geometry_mock_up", "spatial_zone", "spatial_adress_text", "spatial_latitude", "spatial_longitude"];
+    const spatialColumns = ["spatial_geometry_mock_up Geometry", "spatial_latitude Latitude", "spatial_longitude Longitude"];
     const spatialQuery = `SELECT ${spatialColumns.join(',')} from spatial.spatial
                         INNER JOIN spatial.has_spatial ON spatial.has_spatial.has_spatial_spatial = spatial.spatial.spatial_id
                         INNER JOIN object.object ON spatial.has_spatial.has_spatial_object = object.object.object_id
-                        WHERE object.object.object_id = ${object.object_id}`;
+                        WHERE object.object.object_id = ${object.id}`;
     return getData(spatialQuery).then(spatials => {
         return spatials[0];
     })
@@ -110,7 +111,7 @@ app.get('/Relations', (req, res) => {
 })
 
 function getRelations() {
-    const objectsColumns = ["object_relation_first", "object_relation_second"];
+    const objectsColumns = ["object_relation_first A", "object_relation_second B"];
     const objectsQuery = `SELECT ${objectsColumns.join(',')}
                             FROM object.object
                             WHERE object_relation_first is not null`;
@@ -130,7 +131,7 @@ app.get('/Spatial', (req, res) => {
 })
 
 function getSpatialData() {
-    const spatialColumns = ["has_spatial_object as object_id", "spatial_latitude", "spatial_longitude", "spatial_adress_text"];
+    const spatialColumns = ["has_spatial_object Id", "spatial_latitude Latitude", "spatial_longitude Longitude"];
     const spatialQuery = `SELECT ${spatialColumns.join(',')} from spatial.spatial
                         INNER JOIN spatial.has_spatial ON spatial.has_spatial.has_spatial_spatial = spatial.spatial.spatial_id`;
     return getData(spatialQuery);
